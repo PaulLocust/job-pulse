@@ -1,15 +1,19 @@
 package postgres
 
 import (
-  "gorm.io/gorm"
-  "job-pulse/internal/config"
-  "gorm.io/driver/postgres"
-  "fmt"
+	"fmt"
+	"job-pulse/internal/config"
+	"job-pulse/internal/lib/sl"
+	"log/slog"
+	"os"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var DBCon *gorm.DB
 
-func ConnectToDb() {
+func ConnectToDb(log *slog.Logger) {
 	cfg := config.MustLoad()
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
@@ -20,7 +24,9 @@ func ConnectToDb() {
 
 	DBCon, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		log.Error("failed to connect database", sl.Err(err))
+		os.Exit(1)
 	}
+	log.Info("database connected!", slog.String("db", cfg.Database.Name))
 
 }
