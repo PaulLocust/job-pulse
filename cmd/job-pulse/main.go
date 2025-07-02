@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"job-pulse/internal/config"
+	"job-pulse/internal/storage/postgres"
 	"log/slog"
 	"os"
 )
@@ -21,8 +22,10 @@ func main() {
 
 	log.Info("starting job-pulse", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
-
-	fmt.Println(cfg)
+	fmt.Println(cfg.Database)
+	postgres.ConnectToDb()
+	
+	
 }
 
 

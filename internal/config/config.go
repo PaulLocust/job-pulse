@@ -26,7 +26,7 @@ type Database struct {
 	Password string `yaml:"password"`
 	Name     string `yaml:"name" env-default:"postgres"`
 	Port     string `yaml:"port" env-default:"5432"`
-	SSLMode  string `yaml:"ssl_mode" env-default:"false"`
+	SSLMode  string `yaml:"ssl_mode" env-default:"disable"`
 }
 
 func MustLoad() Config {

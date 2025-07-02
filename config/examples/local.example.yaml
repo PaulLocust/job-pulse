@@ -12,4 +12,4 @@ database:
   password: password
   name: postgres
   port: 5432
-  ssl_mode: false
+  ssl_mode: disable
