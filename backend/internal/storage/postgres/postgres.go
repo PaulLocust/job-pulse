@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"fmt"
-	"job-pulse/internal/config"
-	"job-pulse/internal/lib/sl"
+	"job-pulse/backend/internal/config"
+	"job-pulse/backend/internal/lib/sl"
 	"log/slog"
 	"os"
 

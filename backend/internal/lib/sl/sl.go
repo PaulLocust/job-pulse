@@ -2,13 +2,14 @@ package sl
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 )
 
 const (
-    envLocal = "local"
-    envDev   = "dev"
-    envProd  = "prod"
+	envLocal = "local"
+	envDev   = "dev"
+	envProd  = "prod"
 )
 
 func SetupLogger(env string) *slog.Logger {
@@ -28,7 +29,14 @@ func SetupLogger(env string) *slog.Logger {
 
 func Err(err error) slog.Attr {
 	return slog.Attr{
-		Key: "error",
+		Key:   "error",
 		Value: slog.StringValue(err.Error()),
+	}
+}
+
+func Status(resp *http.Response) slog.Attr{
+	return slog.Attr{
+		Key:   "status",
+		Value: slog.IntValue(resp.StatusCode),
 	}
 }
