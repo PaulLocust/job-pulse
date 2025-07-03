@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"job-pulse/backend/internal/config"
-	"job-pulse/backend/internal/hhapi"
+	"job-pulse/backend/internal/controllers"
 	"job-pulse/backend/internal/lib/sl"
 	"job-pulse/backend/internal/storage/postgres"
 	"log/slog"
@@ -26,7 +26,9 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
 
-	r.GET("/vacancies", hhapi.GetVacancies(log))
+	r.GET("/vacancies", controllers.GetVacancies(log))
+	r.GET("/vacancies/:id", controllers.GetVacancyDetails(log))
+	
 
 	log.Info("server started at :8080")
 	r.Run(":8080")
