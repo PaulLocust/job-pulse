@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"regexp"
 )
 
 func FetchVacancies(query string, log *slog.Logger) (*VacanciesResponse, error) {
@@ -58,61 +57,4 @@ func FetchVacancyDetails(id string, log *slog.Logger) (*VacancyDetails, error) {
 	}
 
 	return &details, nil
-}
-
-func FilterVacanciesByLanguages(vacancies []Vacancy, langVariants []string, excludeLangs []string) []Vacancy {
-	// Компилируем регулярные выражения для вариантов искомого языка
-	var langPatterns []*regexp.Regexp
-	for _, lang := range langVariants {
-		langPatterns = append(langPatterns, regexp.MustCompile(`(?i)\b`+regexp.QuoteMeta(lang)+`\b`))
-	}
-
-	// Компилируем паттерны для исключаемых языков
-	var excludePatterns []*regexp.Regexp
-	for _, l := range excludeLangs {
-		// пропускаем все варианты искомого языка, чтобы не исключать их
-		skip := false
-		for _, v := range langVariants {
-			if l == v {
-				skip = true
-				break
-			}
-		}
-		if skip {
-			continue
-		}
-		excludePatterns = append(excludePatterns, regexp.MustCompile(`(?i)\b`+regexp.QuoteMeta(l)+`\b`))
-	}
-
-	var filtered []Vacancy
-	for _, v := range vacancies {
-		title := v.Name
-
-		// Проверяем, есть ли хотя бы один вариант языка в названии
-		matchedLang := false
-		for _, p := range langPatterns {
-			if p.MatchString(title) {
-				matchedLang = true
-				break
-			}
-		}
-		if !matchedLang {
-			continue
-		}
-		
-		// Проверяем, нет ли в названии исключаемых языков
-		excluded := false
-		for _, p := range excludePatterns {
-			if p.MatchString(title) {
-				excluded = true
-				break
-			}
-		}
-		if excluded {
-			continue
-		}
-
-		filtered = append(filtered, v)
-	}
-	return filtered
 }

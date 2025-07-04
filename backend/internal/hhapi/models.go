@@ -13,23 +13,35 @@ type Skill struct {
 	Name string `json:"name"`
 }
 
+
+type Experience struct {
+    ID   string `json:"id"`
+    Name string `json:"name"`
+}
+
 type VacancyDetails struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	KeySkills   []Skill `json:"key_skills"` // Это массив объектов Skill, а не строка
-	Salary      *Salary `json:"salary"`
-	// другие поля при необходимости
+    ID          string      `json:"id"`
+    Name        string      `json:"name"`
+    Description string      `json:"description"`
+    KeySkills   []Skill     `json:"key_skills"`
+    Salary      *Salary     `json:"salary"`
+    Experience  *Experience `json:"experience"` // Добавляем опыт работы
+}
+
+type VacancyTech struct {
+    ID         string     `json:"id"`
+    Name       string     `json:"name"`
+    Salary     *Salary    `json:"salary"`
+    Skills     []string   `json:"skills"`
+    Experience *Experience `json:"experience"` // Добавляем в выходную структуру
 }
 
 type Vacancy struct {
 	ID     string  `json:"id"`
 	Name   string  `json:"name"`
 	Salary *Salary `json:"salary"`
-	// другие поля вакансии
 }
 
 type VacanciesResponse struct {
 	Items []Vacancy `json:"items"`
-	// другие поля ответа
 }

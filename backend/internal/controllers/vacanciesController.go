@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"job-pulse/backend/internal/hhapi"
+	"job-pulse/backend/internal/lib/sl"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -35,8 +36,15 @@ func GetVacancies(log *slog.Logger) gin.HandlerFunc {
 
 		filteredItems := hhapi.FilterVacanciesByLanguages(vacanciesResp.Items, langVariants, excludeLangs)
 
+		for _, item := range filteredItems {
+			if err := hhapi.SaveVacancy(item, log); err != nil {
+				log.Error("failed to save vacancy", sl.Err(err))
+			}
+		}
+
 		c.JSON(http.StatusOK, gin.H{
-			"items": filteredItems,
+			"items":       filteredItems,
+			"saved_count": len(filteredItems),
 		})
 	}
 }
@@ -48,13 +56,11 @@ func GetVacancyDetails(log *slog.Logger) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "vacancy id required"})
 			return
 		}
-
 		details, err := hhapi.FetchVacancyDetails(id, log)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch vacancy details"})
 			return
 		}
-
 		c.JSON(http.StatusOK, gin.H{
 			"id":          details.ID,
 			"name":        details.Name,
@@ -62,5 +68,23 @@ func GetVacancyDetails(log *slog.Logger) gin.HandlerFunc {
 			"key_skills":  details.KeySkills,
 			"salary":      details.Salary,
 		})
+	}
+}
+
+func GetVacancyTechDetails(log *slog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		if id == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "vacancy id required"})
+			return
+		}
+
+		details, err := hhapi.GetVacancyTechDetails(id, log, "D:/my-repo/Go-projects/job-pulse/backend/internal/lib/dataset/tech_dataset.json")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch vacancy details"})
+			return
+		}
+
+		c.JSON(http.StatusOK, details)
 	}
 }

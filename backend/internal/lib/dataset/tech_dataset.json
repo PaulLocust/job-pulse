@@ -1,0 +1,6 @@
+{
+  "languages": ["Golang", "Python", "Java", "C++", "Rust"],
+  "databases": ["PostgreSQL", "MySQL", "MongoDB", "Redis", "NoSQL"],
+  "devops": ["Docker", "Kubernetes", "AWS", "Prometheus", "Grafana", "CI/CD", "Kafka"],
+  "auxillary": ["HTTP", "Rest", "gRPC", "Микросервисы", "TCP/IP", "Protobuf", "unit-тест", "Linux", "Git", "Gitlab", "алгоритмы"]
+}

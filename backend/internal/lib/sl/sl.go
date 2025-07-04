@@ -34,7 +34,7 @@ func Err(err error) slog.Attr {
 	}
 }
 
-func Status(resp *http.Response) slog.Attr{
+func Status(resp *http.Response) slog.Attr {
 	return slog.Attr{
 		Key:   "status",
 		Value: slog.IntValue(resp.StatusCode),

@@ -29,4 +29,14 @@ func ConnectToDb(log *slog.Logger) {
 	}
 	log.Info("database connected!", slog.String("db", cfg.Database.Name))
 
+	// Автомиграция моделей
+    err = DBCon.AutoMigrate(
+        &Vacancy{},
+        &Skill{},
+    )
+    if err != nil {
+        log.Error("failed to migrate models", sl.Err(err))
+        os.Exit(1)
+    }
+    log.Info("database migration completed")
 }
