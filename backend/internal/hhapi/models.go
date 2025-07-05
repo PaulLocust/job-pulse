@@ -1,7 +1,5 @@
 package hhapi
 
-// Структуры вакансий и ответов
-
 type Salary struct {
 	From     *int   `json:"from"`
 	To       *int   `json:"to"`
@@ -9,39 +7,42 @@ type Salary struct {
 	Gross    bool   `json:"gross"`
 }
 
+type Experience struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type Skill struct {
 	Name string `json:"name"`
 }
 
-
-type Experience struct {
-    ID   string `json:"id"`
-    Name string `json:"name"`
+// BasicVacancy содержит минимальные данные о вакансии для первоначальной фильтрации
+type BasicVacancy struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
-type VacancyDetails struct {
-    ID          string      `json:"id"`
-    Name        string      `json:"name"`
-    Description string      `json:"description"`
-    KeySkills   []Skill     `json:"key_skills"`
-    Salary      *Salary     `json:"salary"`
-    Experience  *Experience `json:"experience"` // Добавляем опыт работы
+// VacancyRaw содержит необходимые необработанные данные вакансии из API HH
+type VacancyRaw struct {
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Salary      *Salary     `json:"salary"`
+	Experience  *Experience `json:"experience"`
+	KeySkills   []Skill     `json:"key_skills"`
 }
 
-type VacancyTech struct {
-    ID         string     `json:"id"`
-    Name       string     `json:"name"`
-    Salary     *Salary    `json:"salary"`
-    Skills     []string   `json:"skills"`
-    Experience *Experience `json:"experience"` // Добавляем в выходную структуру
+// VacancyProcessed содержит обработанные данные вакансии для конечного хранения в бд
+type VacancyProcessed struct {
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description,omitempty"`
+	Salary      *Salary     `json:"salary"`
+	Skills      []string    `json:"skills"`
+	Experience  *Experience `json:"experience"`
 }
 
-type Vacancy struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"name"`
-	Salary *Salary `json:"salary"`
-}
-
+// VacanciesResponse представляет ответ API HH при запросе списка вакансий
 type VacanciesResponse struct {
-	Items []Vacancy `json:"items"`
+	Items []BasicVacancy `json:"items"`
 }

@@ -5,7 +5,6 @@ import (
 	"job-pulse/backend/internal/lib/sl"
 	"log/slog"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,74 +16,28 @@ func GetVacancies(log *slog.Logger) gin.HandlerFunc {
 			query = "golang"
 		}
 
-		vacanciesResp, err := hhapi.FetchVacancies(query, log)
+		// Получаем и обрабатываем вакансии
+		vacancies, err := hhapi.FetchAndProcessVacancies(query, log)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch vacancies"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch and process vacancies"})
 			return
 		}
 
-		// Учёт двоякого написания языка в вакансии, пример: (Go/Golang)
-		langVariants := []string{}
-		switch queryLower := strings.ToLower(query); queryLower {
-		case "golang", "go":
-			langVariants = []string{"go", "golang"}
-		default:
-			langVariants = []string{query}
-		}
-
-		excludeLangs := []string{"php", "python", "java", "c++", "javascript", "ruby", "golang", "go"}
-
-		filteredItems := hhapi.FilterVacanciesByLanguages(vacanciesResp.Items, langVariants, excludeLangs)
-
-		for _, item := range filteredItems {
-			if err := hhapi.SaveVacancy(item, log); err != nil {
-				log.Error("failed to save vacancy", sl.Err(err))
+		// Сохраняем вакансии
+		savedCount := 0
+		for _, vacancy := range vacancies {
+			if err := hhapi.SaveVacancy(vacancy); err != nil {
+				log.Error("failed to save vacancy", 
+					slog.String("id", vacancy.ID), 
+					sl.Err(err))
+				continue
 			}
+			savedCount++
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"items":       filteredItems,
-			"saved_count": len(filteredItems),
+			"items":       vacancies,
+			"saved_count": savedCount,
 		})
-	}
-}
-
-func GetVacancyDetails(log *slog.Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		if id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "vacancy id required"})
-			return
-		}
-		details, err := hhapi.FetchVacancyDetails(id, log)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch vacancy details"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"id":          details.ID,
-			"name":        details.Name,
-			"description": details.Description,
-			"key_skills":  details.KeySkills,
-			"salary":      details.Salary,
-		})
-	}
-}
-
-func GetVacancyTechDetails(log *slog.Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		if id == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "vacancy id required"})
-			return
-		}
-
-		details, err := hhapi.GetVacancyTechDetails(id, log, "D:/my-repo/Go-projects/job-pulse/backend/internal/lib/dataset/tech_dataset.json")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch vacancy details"})
-			return
-		}
-
-		c.JSON(http.StatusOK, details)
 	}
 }
