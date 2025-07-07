@@ -3,8 +3,10 @@ package controllers
 import (
 	"job-pulse/backend/internal/hhapi"
 	"job-pulse/backend/internal/lib/sl"
+	"job-pulse/backend/internal/lib/statistics"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,5 +41,30 @@ func GetVacancies(log *slog.Logger) gin.HandlerFunc {
 			"items":       vacancies,
 			"saved_count": savedCount,
 		})
+	}
+}
+
+func GetSkillStats(log *slog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		limitStr := c.DefaultQuery("limit", "20") // Значение по умолчанию: 20
+		limit, err := strconv.Atoi(limitStr)
+		
+		if limit > 100 {
+    		limit = 100
+		}
+
+		if err != nil {
+    		c.JSON(http.StatusBadRequest, gin.H{"error": "limit must be a number"})
+    		return
+		}
+
+    	stats, err := statistics.GetSkillsFrequency(limit)
+    	if err != nil {
+    		log.Error("Failed to get skills stats", "error", err)
+    		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+    		return
+		}
+
+    	c.JSON(http.StatusOK, stats)
 	}
 }

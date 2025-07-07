@@ -7,6 +7,9 @@ import (
 	"job-pulse/backend/internal/storage/postgres"
 	"log/slog"
 	"net/http"
+	"time"
+
+	"github.com/gin-contrib/cors"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,11 +24,22 @@ func main() {
 
 	r := gin.Default()
 
+	// Настройка CORS (разрешаем запросы с фронтенда)
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // URL вашего фронтенда
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
 
 	r.GET("/vacancies", controllers.GetVacancies(log))
+	r.GET("/api/skills/stats", controllers.GetSkillStats(log))
 
 	log.Info("server started at :8080")
 	r.Run(":8080")

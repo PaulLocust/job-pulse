@@ -3,6 +3,7 @@ module job-pulse
 go 1.24.4
 
 require (
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
 	github.com/grokify/html-strip-tags-go v0.1.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
