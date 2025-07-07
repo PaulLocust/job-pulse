@@ -1,18 +1,123 @@
+/* Основные цвета в стиле Go */
+:root {
+  --go-purple: #5D3FD3;       /* Основной фиолетовый Go */
+  --go-blue: #6AD7E5;         /* Голубой акцент */
+  --go-gray-light: #F8F9FA;   /* Светлый фон */
+  --go-gray-dark: #1E1E1E;    /* Тёмный текст */
+  --go-white: #FFFFFF;        /* Белый */
+  --go-grid: #E0E0E0;         /* Цвет сетки */
+}
+
+/* Базовые стили */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+  background-color: var(--go-gray-light);
+  color: var(--go-gray-dark);
   margin: 0;
-  padding: 20px;
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 20px;
   padding: 0;
+  line-height: 1.6;
 }
 
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+/* Контейнер графика */
+.chart-container {
+  background-color: var(--go-white);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(93, 63, 211, 0.1);
+  padding: 24px;
+  margin: 20px auto;
+  max-width: 900px;
+}
+
+/* Заголовок страницы */
+.page-title {
+  color: var(--go-purple);
+  text-align: center;
+  margin: 30px 0;
+  font-weight: 700;
+  font-size: 2.2rem;
+}
+
+/* Навигация */
+.navbar {
+  background-color: var(--go-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px 0;
+}
+
+.nav-list {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 30px;
+}
+
+.nav-link {
+  color: var(--go-gray-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--go-purple);
+  background-color: rgba(93, 63, 211, 0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .chart-container {
+    padding: 16px;
+    margin: 10px;
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+    margin: 20px 0;
+  }
+  
+  .nav-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chart-wrapper {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Дополнительные элементы */
+.loading-text {
+  color: var(--go-purple);
+  text-align: center;
+  font-size: 1.2rem;
+  margin: 40px 0;
+}
+
+.error-message {
+  color: #D33F5D;
+  background-color: rgba(211, 63, 93, 0.1);
+  padding: 16px;
+  border-radius: 4px;
+  text-align: center;
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--go-gray-dark);
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
 }
